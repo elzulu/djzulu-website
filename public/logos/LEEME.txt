@@ -1,0 +1,7 @@
+Coloca aquí tu logo en formato PNG o SVG.
+Nombre sugerido: logo.png o logo.svg
+
+También puedes subirlo desde el panel admin en:
+  /admin → Configuración → Subir logo
+
+El logo se almacenará en Supabase Storage automáticamente.
