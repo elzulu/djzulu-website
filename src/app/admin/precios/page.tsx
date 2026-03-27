@@ -19,6 +19,7 @@ export default function PreciosAdmin() {
   const [editing, setEditing] = useState<Precio | null>(null)
   const [loading, setLoading] = useState(false)
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { load() }, [])
 
   async function load() {

@@ -66,7 +66,7 @@ export default async function AdminDashboard() {
 
       <div style={{ padding: '20px', background: 'rgba(0,180,255,0.04)', border: '1px solid rgba(0,180,255,0.1)', borderRadius: 10 }}>
         <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)', lineHeight: 1.7 }}>
-          💡 <strong style={{ color: 'rgba(255,255,255,0.5)' }}>Tip:</strong> Crea un evento, sube sus fotos y videos desde "Galería", y se publicará automáticamente en tu sitio web en segundos.
+          💡 <strong style={{ color: 'rgba(255,255,255,0.5)' }}>Tip:</strong> Crea un evento, sube sus fotos y videos desde &ldquo;Galería&rdquo;, y se publicará automáticamente en tu sitio web en segundos.
         </p>
       </div>
     </div>
