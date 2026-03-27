@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
 import { PlusCircle, Trash2, Save } from 'lucide-react'
-import type { Testimonio } from '@/components/layout/Testimonios'
+import type { Testimonio } from '@/types'
 
 const EMPTY = { nombre: '', evento: '', texto: '', foto_url: '' }
 
