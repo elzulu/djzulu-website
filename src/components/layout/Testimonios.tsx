@@ -21,7 +21,7 @@ export default function Testimonios({ testimonios }: { testimonios: Testimonio[]
               viewport={{ once: true }} transition={{ delay: i * 0.08 }}
               style={{ background: '#0d0d2b', border: '1px solid rgba(0,180,255,0.12)', borderRadius: 12, padding: 24, position: 'relative', overflow: 'hidden' }}>
               {/* Quote mark */}
-              <div style={{ position: 'absolute', top: 16, right: 20, fontFamily: 'Georgia, serif', fontSize: 72, color: 'rgba(0,180,255,0.06)', lineHeight: 1, userSelect: 'none' }}>"</div>
+              <div style={{ position: 'absolute', top: 16, right: 20, fontFamily: 'Georgia, serif', fontSize: 72, color: 'rgba(0,180,255,0.06)', lineHeight: 1, userSelect: 'none' }}>&ldquo;</div>
 
               {/* Stars */}
               <div style={{ display: 'flex', gap: 3, marginBottom: 14 }}>
@@ -31,7 +31,7 @@ export default function Testimonios({ testimonios }: { testimonios: Testimonio[]
               </div>
 
               <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.65)', lineHeight: 1.7, marginBottom: 20 }}>
-                "{t.texto}"
+                &ldquo;{t.texto}&rdquo;
               </p>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>

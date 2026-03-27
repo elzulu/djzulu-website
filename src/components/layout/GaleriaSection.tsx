@@ -20,12 +20,12 @@ export default function GaleriaSection({ media }: Props) {
     if (lightbox === null) return
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setLightbox(null)
-      else if (e.key === 'ArrowLeft') prev()
-      else if (e.key === 'ArrowRight') next()
+      else if (e.key === 'ArrowLeft') setLightbox(i => (i! - 1 + media.length) % media.length)
+      else if (e.key === 'ArrowRight') setLightbox(i => (i! + 1) % media.length)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [lightbox])
+  }, [lightbox, media.length])
 
   return (
     <section id="galeria" style={{ padding: '0 24px 80px' }}>
