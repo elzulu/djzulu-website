@@ -1,9 +1,10 @@
 'use client'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
+import type { Config } from '@/types'
 
 interface PressKitProps {
-  config: Record<string, string>
+  config: Config
 }
 
 export default function PressKit({ config }: PressKitProps) {

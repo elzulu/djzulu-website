@@ -1,5 +1,7 @@
+import type { Config } from '@/types'
+
 interface FooterProps {
-  config: Record<string, string>
+  config: Config
 }
 
 export default function Footer({ config }: FooterProps) {

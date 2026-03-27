@@ -25,8 +25,10 @@ function CountUp({ value, suffix = '' }: { value: string; suffix?: string }) {
   )
 }
 
+import type { Config } from '@/types'
+
 interface HeroProps {
-  config: Record<string, string>
+  config: Config
 }
 
 const ICONS = ['🎛️', '🎧', '💿', '🎚️', '🎵', '🎶', '🎤']

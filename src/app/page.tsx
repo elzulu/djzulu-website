@@ -58,7 +58,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <Navbar whatsapp={config.whatsapp} logoUrl={config.logo_url} />
+      <Navbar whatsapp={config.whatsapp ?? ''} logoUrl={config.logo_url} />
       <main>
         <Hero config={config} />
 
@@ -77,7 +77,7 @@ export default async function HomePage() {
         {/* Contacto con formulario */}
         <section id="contacto" style={{ padding: '80px 24px' }}>
           <div className="max-w-7xl mx-auto" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24 }}>
-            <CotizacionForm whatsapp={config.whatsapp} />
+            <CotizacionForm whatsapp={config.whatsapp ?? ''} />
             <Contacto config={config} />
           </div>
         </section>
@@ -93,7 +93,7 @@ export default async function HomePage() {
         <div style={{ maxWidth: '80rem', margin: '0 auto', padding: '0 24px' }}>
           <div style={{ height: 1, background: 'linear-gradient(90deg, transparent, rgba(0,180,255,0.3), rgba(180,79,255,0.3), transparent)' }} />
         </div>
-        <Precios precios={precios} whatsapp={config.whatsapp} />
+        <Precios precios={precios} whatsapp={config.whatsapp ?? ''} />
       </main>
       <Footer config={config} />
     </>

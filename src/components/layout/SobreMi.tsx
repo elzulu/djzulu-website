@@ -1,8 +1,9 @@
 'use client'
 import { motion } from 'framer-motion'
 import { MapPin, Music2, Clock, Users } from 'lucide-react'
+import type { Config } from '@/types'
 
-interface Props { config: Record<string, string> }
+interface Props { config: Config }
 
 export default function SobreMi({ config }: Props) {
   const bio = config.bio

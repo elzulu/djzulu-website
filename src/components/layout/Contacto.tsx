@@ -1,9 +1,10 @@
 'use client'
 import { motion } from 'framer-motion'
 import { MessageCircle, Music2, Video, MapPin, Instagram, Youtube } from 'lucide-react'
+import type { Config } from '@/types'
 
 interface Props {
-  config: Record<string, string>
+  config: Config
 }
 
 const TikTokIcon = () => (
