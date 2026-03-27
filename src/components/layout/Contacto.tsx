@@ -115,6 +115,15 @@ export default function Contacto({ config }: Props) {
                   <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)' }}>TikTok — @zulu.events.media</span>
                 </a>
               )}
+              {config.instagram_url && (
+                <a href={config.instagram_url} target="_blank" rel="noopener noreferrer"
+                  style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 20px', background: 'rgba(225,48,108,0.06)', border: '1px solid rgba(225,48,108,0.15)', borderRadius: 10, textDecoration: 'none', transition: 'border-color 0.2s' }}
+                  onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(225,48,108,0.4)')}
+                  onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(225,48,108,0.15)')}>
+                  <Instagram size={22} color="#e1306c" />
+                  <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)' }}>Instagram — @elzulu_oficial</span>
+                </a>
+              )}
             </div>
 
             {/* Location */}

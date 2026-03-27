@@ -72,7 +72,7 @@ export default function Navbar({ whatsapp, logoUrl }: { whatsapp: string; logoUr
         </a>
 
         {/* Mobile menu btn */}
-        <button className="md:hidden text-white" onClick={() => setOpen(!open)}>
+        <button className="md:hidden text-white" onClick={() => setOpen(!open)} aria-label={open ? 'Cerrar menú' : 'Abrir menú'} aria-expanded={open}>
           {open ? <X size={22} /> : <Menu size={22} />}
         </button>
       </div>

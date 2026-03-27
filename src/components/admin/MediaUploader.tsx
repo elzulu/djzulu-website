@@ -9,30 +9,45 @@ interface Evento { id: string; titulo: string; fecha: string }
 
 async function compressImage(file: File): Promise<File> {
   if (!file.type.startsWith('image/')) return file
+  try {
+    const testCanvas = document.createElement('canvas')
+    if (!testCanvas.getContext || !testCanvas.toBlob) return file
+  } catch {
+    return file
+  }
   return new Promise((resolve) => {
-    const img = new window.Image()
-    const url = URL.createObjectURL(file)
-    img.onload = () => {
-      URL.revokeObjectURL(url)
-      const MAX = 1920
-      let { width, height } = img
-      if (width > MAX || height > MAX) {
-        if (width > height) { height = Math.round(height * MAX / width); width = MAX }
-        else { width = Math.round(width * MAX / height); height = MAX }
+    try {
+      const img = new window.Image()
+      const url = URL.createObjectURL(file)
+      img.onload = () => {
+        URL.revokeObjectURL(url)
+        try {
+          const MAX = 1920
+          let { width, height } = img
+          if (width > MAX || height > MAX) {
+            if (width > height) { height = Math.round(height * MAX / width); width = MAX }
+            else { width = Math.round(width * MAX / height); height = MAX }
+          }
+          const canvas = document.createElement('canvas')
+          canvas.width = width
+          canvas.height = height
+          const ctx = canvas.getContext('2d')
+          if (!ctx) return resolve(file)
+          ctx.drawImage(img, 0, 0, width, height)
+          canvas.toBlob((blob) => {
+            if (!blob) return resolve(file)
+            const newName = file.name.replace(/\.[^.]+$/, '.webp')
+            resolve(new File([blob], newName, { type: 'image/webp' }))
+          }, 'image/webp', 0.82)
+        } catch {
+          resolve(file)
+        }
       }
-      const canvas = document.createElement('canvas')
-      canvas.width = width
-      canvas.height = height
-      const ctx = canvas.getContext('2d')!
-      ctx.drawImage(img, 0, 0, width, height)
-      canvas.toBlob((blob) => {
-        if (!blob) return resolve(file)
-        const newName = file.name.replace(/\.[^.]+$/, '.webp')
-        resolve(new File([blob], newName, { type: 'image/webp' }))
-      }, 'image/webp', 0.82)
+      img.onerror = () => { URL.revokeObjectURL(url); resolve(file) }
+      img.src = url
+    } catch {
+      resolve(file)
     }
-    img.onerror = () => { URL.revokeObjectURL(url); resolve(file) }
-    img.src = url
   })
 }
 

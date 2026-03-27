@@ -2,15 +2,7 @@
 import { motion } from 'framer-motion'
 import { Star } from 'lucide-react'
 import { SectionHeader } from './Servicios'
-
-export interface Testimonio {
-  id: string
-  nombre: string
-  evento?: string
-  texto: string
-  foto_url?: string
-  orden: number
-}
+import type { Testimonio } from '@/types'
 
 export default function Testimonios({ testimonios }: { testimonios: Testimonio[] }) {
   if (testimonios.length === 0) return null

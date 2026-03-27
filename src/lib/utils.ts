@@ -10,8 +10,8 @@ export function getWhatsAppUrl(number: string, mensaje?: string) {
   return mensaje ? `${base}?text=${encodeURIComponent(mensaje)}` : base
 }
 
-export function formatFecha(fecha: string) {
-  return new Date(fecha).toLocaleDateString('es-CO', {
+export function formatFecha(fecha: string, locale = 'es-CO') {
+  return new Date(fecha).toLocaleDateString(locale, {
     day: 'numeric',
     month: 'long',
     year: 'numeric',

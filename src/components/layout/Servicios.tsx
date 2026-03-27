@@ -1,7 +1,7 @@
 'use client'
 import { motion } from 'framer-motion'
 import type { Servicio } from '@/types'
-import { Music, Briefcase, Zap, Star, Camera, Users } from 'lucide-react'
+import { Music, Briefcase, Zap, Star, Camera, Users, Music2, Headphones } from 'lucide-react'
 
 const ICON_MAP: Record<string, React.ReactNode> = {
   music: <Music size={20} color="#00b4ff" />,
@@ -10,6 +10,8 @@ const ICON_MAP: Record<string, React.ReactNode> = {
   star: <Star size={20} color="#00b4ff" />,
   camera: <Camera size={20} color="#00b4ff" />,
   users: <Users size={20} color="#00b4ff" />,
+  mic: <Music2 size={20} color="#00b4ff" />,
+  headphones: <Headphones size={20} color="#00b4ff" />,
 }
 
 export default function Servicios({ servicios }: { servicios: Servicio[] }) {

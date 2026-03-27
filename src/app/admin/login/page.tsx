@@ -40,7 +40,7 @@ export default function LoginPage() {
           <div>
             <label style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', letterSpacing: 1, display: 'block', marginBottom: 6 }}>EMAIL</label>
             <input
-              type="email" value={email} onChange={e => setEmail(e.target.value)} required
+              type="email" value={email} onChange={e => setEmail(e.target.value)} required autoComplete="email"
               style={{ width: '100%', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(0,180,255,0.2)', borderRadius: 6, padding: '11px 14px', color: '#fff', fontSize: 15, outline: 'none' }}
               placeholder="tu@email.com"
             />
@@ -48,7 +48,7 @@ export default function LoginPage() {
           <div>
             <label style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', letterSpacing: 1, display: 'block', marginBottom: 6 }}>CONTRASEÑA</label>
             <input
-              type="password" value={password} onChange={e => setPassword(e.target.value)} required
+              type="password" value={password} onChange={e => setPassword(e.target.value)} required autoComplete="current-password"
               style={{ width: '100%', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(0,180,255,0.2)', borderRadius: 6, padding: '11px 14px', color: '#fff', fontSize: 15, outline: 'none' }}
               placeholder="••••••••"
             />

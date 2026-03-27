@@ -69,7 +69,10 @@ export default function SobreMi({ config }: Props) {
             )}
 
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-              {['Electrónica', 'Urbano', 'Crossover', 'Merengue', 'Open Format'].map(g => (
+              {(config.generos
+                ? config.generos.split(',').map(g => g.trim()).filter(Boolean)
+                : ['Electrónica', 'Urbano', 'Crossover', 'Merengue', 'Open Format']
+              ).map(g => (
                 <span key={g} style={{ padding: '6px 14px', borderRadius: 20, background: 'rgba(0,180,255,0.08)', border: '1px solid rgba(0,180,255,0.2)', fontSize: 13, color: '#00b4ff', fontWeight: 600 }}>{g}</span>
               ))}
             </div>

@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
 import { UploadCloud } from 'lucide-react'
+import NextImage from 'next/image'
 
 const FIELDS = [
   { key: 'nombre_artistico', label: 'Nombre artístico', placeholder: 'DJ Zulu' },
@@ -15,8 +16,10 @@ const FIELDS = [
   { key: 'whatsapp', label: 'WhatsApp (con código país, sin +)', placeholder: '573001234567' },
   { key: 'youtube_url', label: 'URL de YouTube', placeholder: 'https://youtube.com/@elzulu_oficial' },
   { key: 'tiktok_url', label: 'URL de TikTok', placeholder: 'https://tiktok.com/@zulu.events.media' },
+  { key: 'instagram_url', label: 'URL de Instagram', placeholder: 'https://www.instagram.com/elzulu_oficial/' },
   { key: 'eventos_count', label: 'Número de eventos (estadística hero)', placeholder: '200+' },
   { key: 'anos_experiencia', label: 'Años de experiencia', placeholder: '4' },
+  { key: 'generos', label: 'Géneros musicales (separados por coma)', placeholder: 'Electrónica, Urbano, Crossover, Merengue, Open Format' },
 ]
 
 export default function ConfigForm({ config }: { config: Record<string, string> }) {
@@ -41,52 +44,36 @@ export default function ConfigForm({ config }: { config: Record<string, string> 
     setLoading(false)
   }
 
-  async function uploadFoto(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (!file) return
-    setFotoUploading(true)
+  async function uploadFile(
+    file: File,
+    pathPrefix: string,
+    configKey: string,
+    setUploading: (v: boolean) => void,
+    successMsg: string,
+  ) {
+    setUploading(true)
     const ext = file.name.split('.').pop()
-    const path = `foto-perfil-${Date.now()}.${ext}`
-    const { error } = await supabase.storage.from('logos').upload(path, file, { upsert: true })
-    if (error) { toast.error('Error subiendo foto'); setFotoUploading(false); return }
+    const path = `${pathPrefix}-${Date.now()}.${ext}`
+    const { error: uploadError } = await supabase.storage.from('logos').upload(path, file, { upsert: true })
+    if (uploadError) { toast.error('Error subiendo archivo'); setUploading(false); return }
     const { data: { publicUrl } } = supabase.storage.from('logos').getPublicUrl(path)
-    setForm(f => ({ ...f, foto_perfil_url: publicUrl }))
-    await supabase.from('config').upsert({ clave: 'foto_perfil_url', valor: publicUrl }, { onConflict: 'clave' })
-    toast.success('Foto de perfil actualizada ✓')
-    setFotoUploading(false)
+    const { error: dbError } = await supabase.from('config').upsert({ clave: configKey, valor: publicUrl }, { onConflict: 'clave' })
+    if (dbError) { toast.error('Error guardando URL'); setUploading(false); return }
+    setForm(f => ({ ...f, [configKey]: publicUrl }))
+    toast.success(successMsg)
+    setUploading(false)
     router.refresh()
   }
 
-  async function uploadPresskit(e: React.ChangeEvent<HTMLInputElement>) {
+  function onFileChange(
+    e: React.ChangeEvent<HTMLInputElement>,
+    pathPrefix: string,
+    configKey: string,
+    setUploading: (v: boolean) => void,
+    successMsg: string,
+  ) {
     const file = e.target.files?.[0]
-    if (!file) return
-    setPresskitUploading(true)
-    const ext = file.name.split('.').pop()
-    const path = `presskit-foto-${Date.now()}.${ext}`
-    const { error } = await supabase.storage.from('logos').upload(path, file, { upsert: true })
-    if (error) { toast.error('Error subiendo foto'); setPresskitUploading(false); return }
-    const { data: { publicUrl } } = supabase.storage.from('logos').getPublicUrl(path)
-    setForm(f => ({ ...f, presskit_foto_url: publicUrl }))
-    await supabase.from('config').upsert({ clave: 'presskit_foto_url', valor: publicUrl }, { onConflict: 'clave' })
-    toast.success('Foto del Press Kit actualizada ✓')
-    setPresskitUploading(false)
-    router.refresh()
-  }
-
-  async function uploadLogo(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (!file) return
-    setLogoUploading(true)
-    const ext = file.name.split('.').pop()
-    const path = `logo-${Date.now()}.${ext}`
-    const { error } = await supabase.storage.from('logos').upload(path, file, { upsert: true })
-    if (error) { toast.error('Error subiendo logo'); setLogoUploading(false); return }
-    const { data: { publicUrl } } = supabase.storage.from('logos').getPublicUrl(path)
-    setForm(f => ({ ...f, logo_url: publicUrl }))
-    await supabase.from('config').upsert({ clave: 'logo_url', valor: publicUrl }, { onConflict: 'clave' })
-    toast.success('Logo actualizado ✓')
-    setLogoUploading(false)
-    router.refresh()
+    if (file) uploadFile(file, pathPrefix, configKey, setUploading, successMsg)
   }
 
   return (
@@ -97,8 +84,7 @@ export default function ConfigForm({ config }: { config: Record<string, string> 
         <label style={labelStyle}>LOGO DEL SITIO</label>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           {form.logo_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={form.logo_url} alt="Logo" style={{ width: 60, height: 60, objectFit: 'contain', borderRadius: 8, border: '1px solid rgba(0,180,255,0.2)' }} />
+            <NextImage src={form.logo_url} alt="Logo" width={60} height={60} style={{ objectFit: 'contain', borderRadius: 8, border: '1px solid rgba(0,180,255,0.2)' }} />
           ) : (
             <div style={{ width: 60, height: 60, borderRadius: 8, background: 'rgba(0,180,255,0.08)', border: '1px dashed rgba(0,180,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <UploadCloud size={20} color="rgba(0,180,255,0.4)" />
@@ -106,7 +92,7 @@ export default function ConfigForm({ config }: { config: Record<string, string> 
           )}
           <label style={{ cursor: 'pointer', fontSize: 13, color: '#00b4ff', fontWeight: 600, letterSpacing: 1 }}>
             {logoUploading ? 'SUBIENDO...' : 'SUBIR LOGO'}
-            <input type="file" accept="image/*" onChange={uploadLogo} style={{ display: 'none' }} disabled={logoUploading} />
+            <input type="file" accept="image/*" onChange={e => onFileChange(e, 'logo', 'logo_url', setLogoUploading, 'Logo actualizado ✓')} style={{ display: 'none' }} disabled={logoUploading} />
           </label>
         </div>
       </div>
@@ -116,8 +102,7 @@ export default function ConfigForm({ config }: { config: Record<string, string> 
         <label style={labelStyle}>FOTO PRESS KIT</label>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           {form.presskit_foto_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={form.presskit_foto_url} alt="Press Kit" style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 8, border: '1px solid rgba(0,180,255,0.2)' }} />
+            <NextImage src={form.presskit_foto_url} alt="Press Kit" width={60} height={60} style={{ objectFit: 'cover', borderRadius: 8, border: '1px solid rgba(0,180,255,0.2)' }} />
           ) : (
             <div style={{ width: 60, height: 60, borderRadius: 8, background: 'rgba(0,180,255,0.08)', border: '1px dashed rgba(0,180,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <UploadCloud size={20} color="rgba(0,180,255,0.4)" />
@@ -125,7 +110,7 @@ export default function ConfigForm({ config }: { config: Record<string, string> 
           )}
           <label style={{ cursor: 'pointer', fontSize: 13, color: '#00b4ff', fontWeight: 600, letterSpacing: 1 }}>
             {presskitUploading ? 'SUBIENDO...' : 'SUBIR FOTO'}
-            <input type="file" accept="image/*" onChange={uploadPresskit} style={{ display: 'none' }} disabled={presskitUploading} />
+            <input type="file" accept="image/*" onChange={e => onFileChange(e, 'presskit-foto', 'presskit_foto_url', setPresskitUploading, 'Foto del Press Kit actualizada ✓')} style={{ display: 'none' }} disabled={presskitUploading} />
           </label>
         </div>
       </div>
@@ -135,8 +120,7 @@ export default function ConfigForm({ config }: { config: Record<string, string> 
         <label style={labelStyle}>FOTO DE PERFIL (sección Sobre Mí)</label>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           {form.foto_perfil_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={form.foto_perfil_url} alt="Foto de perfil" style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 8, border: '1px solid rgba(0,180,255,0.2)' }} />
+            <NextImage src={form.foto_perfil_url} alt="Foto de perfil" width={60} height={60} style={{ objectFit: 'cover', borderRadius: 8, border: '1px solid rgba(0,180,255,0.2)' }} />
           ) : (
             <div style={{ width: 60, height: 60, borderRadius: 8, background: 'rgba(0,180,255,0.08)', border: '1px dashed rgba(0,180,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <UploadCloud size={20} color="rgba(0,180,255,0.4)" />
@@ -144,7 +128,7 @@ export default function ConfigForm({ config }: { config: Record<string, string> 
           )}
           <label style={{ cursor: 'pointer', fontSize: 13, color: '#00b4ff', fontWeight: 600, letterSpacing: 1 }}>
             {fotoUploading ? 'SUBIENDO...' : 'SUBIR FOTO'}
-            <input type="file" accept="image/*" onChange={uploadFoto} style={{ display: 'none' }} disabled={fotoUploading} />
+            <input type="file" accept="image/*" onChange={e => onFileChange(e, 'foto-perfil', 'foto_perfil_url', setFotoUploading, 'Foto de perfil actualizada ✓')} style={{ display: 'none' }} disabled={fotoUploading} />
           </label>
         </div>
       </div>

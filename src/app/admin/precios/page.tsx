@@ -7,6 +7,11 @@ import type { Precio } from '@/types'
 
 const EMPTY = { nombre: '', precio: '', periodo: '', destacado: false, features: [''], activo: true }
 
+function parseFeatures(value: unknown): string[] {
+  if (Array.isArray(value)) return value
+  try { return JSON.parse(value as string) } catch { return [] }
+}
+
 export default function PreciosAdmin() {
   const supabase = createClient()
   const [precios, setPrecios] = useState<Precio[]>([])
@@ -44,7 +49,7 @@ export default function PreciosAdmin() {
 
   function startEdit(p: Precio) {
     setEditing(p)
-    setForm({ nombre: p.nombre, precio: p.precio, periodo: p.periodo ?? '', destacado: p.destacado, features: Array.isArray(p.features) ? [...p.features] : JSON.parse(p.features as unknown as string), activo: p.activo })
+    setForm({ nombre: p.nombre, precio: p.precio, periodo: p.periodo ?? '', destacado: p.destacado, features: parseFeatures(p.features), activo: p.activo })
   }
 
   async function remove(id: string) {
@@ -118,7 +123,7 @@ export default function PreciosAdmin() {
             <div style={{ fontSize: 15, fontWeight: 600, marginTop: 2 }}>{p.nombre}</div>
             <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', marginBottom: 12 }}>{p.periodo}</div>
             <ul style={{ listStyle: 'none', fontSize: 13, color: 'rgba(255,255,255,0.5)', marginBottom: 16, display: 'flex', flexDirection: 'column', gap: 4 }}>
-              {(Array.isArray(p.features) ? p.features : JSON.parse(p.features as unknown as string)).map((f: string) => (
+              {parseFeatures(p.features).map((f: string) => (
                 <li key={f} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                   <span style={{ color: '#00b4ff' }}>·</span> {f}
                 </li>

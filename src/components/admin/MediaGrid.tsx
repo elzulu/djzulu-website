@@ -48,7 +48,12 @@ export default function MediaGrid({ media }: { media: MediaItem[] }) {
             {item.tipo === 'imagen' ? (
               <Image src={item.url} alt={item.nombre_original ?? ''} fill style={{ objectFit: 'cover' }} sizes="200px" />
             ) : (
-              <video src={item.url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} muted />
+              <>
+                <video src={item.url} preload="none" style={{ width: '100%', height: '100%', objectFit: 'cover' }} muted />
+                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+                  <Film size={28} color="rgba(255,255,255,0.4)" />
+                </div>
+              </>
             )}
             {/* Type badge */}
             <div style={{ position: 'absolute', top: 6, left: 6, background: 'rgba(0,0,0,0.7)', borderRadius: 4, padding: '2px 6px', display: 'flex', alignItems: 'center', gap: 4 }}>

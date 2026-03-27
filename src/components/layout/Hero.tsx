@@ -1,7 +1,7 @@
 'use client'
 import { motion, useInView, useMotionValue, useTransform, animate } from 'framer-motion'
 import Image from 'next/image'
-import { useMemo, useEffect, useRef } from 'react'
+import { useMemo, useEffect, useRef, useState } from 'react'
 
 function CountUp({ value, suffix = '' }: { value: string; suffix?: string }) {
   const ref = useRef<HTMLDivElement>(null)
@@ -30,11 +30,21 @@ interface HeroProps {
 }
 
 const ICONS = ['🎛️', '🎧', '💿', '🎚️', '🎵', '🎶', '🎤']
-const HERO_IMG = 'https://eysuzbimipheuuaizaxz.supabase.co/storage/v1/object/public/media/Screenshot_2026-03-24-18-25-00-370_com.google.android.apps.photos.png'
+const HERO_IMG = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/Screenshot_2026-03-24-18-25-00-370_com.google.android.apps.photos.png`
 
 const TICKER_TEXT = '· DJ ZULU · EVENTS & MEDIA · MEDELLÍN · ZULU EVENTS · DJ · BOOKING · '
 
 function FallingItems() {
+  const [reducedMotion, setReducedMotion] = useState(false)
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    setReducedMotion(mq.matches)
+    const onChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches)
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+
   const items = useMemo(() => Array.from({ length: 50 }, (_, i) => ({
     id: i,
     icon: ICONS[i % ICONS.length],
@@ -44,6 +54,8 @@ function FallingItems() {
     size: 18 + (i % 4) * 8,
     rotate: (i % 2 === 0 ? 1 : -1) * (180 + i * 30),
   })), [])
+
+  if (reducedMotion) return null
 
   return (
     <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>

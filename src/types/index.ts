@@ -12,6 +12,7 @@ export interface Evento {
   created_at: string
   updated_at: string
   publicado: boolean
+  orden?: number
   media?: Media[]
 }
 
@@ -46,6 +47,31 @@ export interface Precio {
   activo: boolean
 }
 
+export interface Testimonio {
+  id: string
+  nombre: string
+  evento?: string
+  texto: string
+  foto_url?: string
+  orden: number
+}
+
 export interface Config {
-  [key: string]: string
+  nombre_artistico?: string
+  nombre_real?: string
+  tagline?: string
+  descripcion?: string
+  bio?: string
+  ciudad?: string
+  whatsapp?: string
+  youtube_url?: string
+  tiktok_url?: string
+  instagram_url?: string
+  eventos_count?: string
+  anos_experiencia?: string
+  generos?: string
+  logo_url?: string
+  foto_perfil_url?: string
+  presskit_foto_url?: string
+  [key: string]: string | undefined
 }

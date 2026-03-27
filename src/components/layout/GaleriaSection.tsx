@@ -1,7 +1,8 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
+import Image from 'next/image'
 import type { Media } from '@/types'
 import { SectionHeader } from './Servicios'
 
@@ -14,6 +15,17 @@ export default function GaleriaSection({ media }: Props) {
 
   const prev = () => setLightbox(i => (i! - 1 + media.length) % media.length)
   const next = () => setLightbox(i => (i! + 1) % media.length)
+
+  useEffect(() => {
+    if (lightbox === null) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setLightbox(null)
+      else if (e.key === 'ArrowLeft') prev()
+      else if (e.key === 'ArrowRight') next()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [lightbox])
 
   return (
     <section id="galeria" style={{ padding: '0 24px 80px' }}>
@@ -32,7 +44,7 @@ export default function GaleriaSection({ media }: Props) {
               whileHover={{ scale: 1.03, zIndex: 1 }}
               onClick={() => setLightbox(i)}
               style={{ position: 'relative', aspectRatio: '1/1', borderRadius: 8, overflow: 'hidden', cursor: 'pointer', background: '#0d0d2b', border: '1px solid rgba(0,180,255,0.08)' }}>
-              <img src={item.url} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+              <Image src={item.url} alt="" fill style={{ objectFit: 'cover' }} sizes="(max-width:768px) 50vw, 25vw" />
               <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0)', transition: 'background 0.2s' }}
                 onMouseEnter={e => (e.currentTarget.style.background = 'rgba(0,180,255,0.12)')}
                 onMouseLeave={e => (e.currentTarget.style.background = 'rgba(0,0,0,0)')} />
@@ -60,11 +72,12 @@ export default function GaleriaSection({ media }: Props) {
               </button>
             )}
 
-            <motion.img key={lightbox}
+            <motion.div key={lightbox}
               initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
-              src={media[lightbox].url} alt=""
               onClick={e => e.stopPropagation()}
-              style={{ maxWidth: '90vw', maxHeight: '90vh', objectFit: 'contain', borderRadius: 8 }} />
+              style={{ position: 'relative', width: '90vw', height: '90vh', borderRadius: 8, overflow: 'hidden' }}>
+              <Image src={media[lightbox].url} alt="" fill style={{ objectFit: 'contain' }} sizes="90vw" />
+            </motion.div>
 
             {/* Next */}
             {media.length > 1 && (

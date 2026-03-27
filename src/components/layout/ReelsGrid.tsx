@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import type { Evento } from '@/types'
@@ -52,6 +52,53 @@ function Slideshow({ images }: { images: { id: string; url: string }[] }) {
 
 export default function ReelsGrid({ eventos }: ReelsGridProps) {
   const [selected, setSelected] = useState<Evento | null>(null)
+  const triggerRef = useRef<HTMLElement | null>(null)
+  const closeButtonRef = useRef<HTMLButtonElement | null>(null)
+  const modalRef = useRef<HTMLDivElement | null>(null)
+
+  // Mover foco al abrir/cerrar el modal
+  useEffect(() => {
+    if (selected) {
+      const t = setTimeout(() => closeButtonRef.current?.focus(), 50)
+      return () => clearTimeout(t)
+    } else {
+      triggerRef.current?.focus()
+    }
+  }, [selected])
+
+  // Focus trap dentro del modal
+  useEffect(() => {
+    if (!selected) return
+    const modal = modalRef.current
+    if (!modal) return
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return
+      const focusable = Array.from(
+        modal.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+      ).filter(el => !el.hasAttribute('disabled'))
+      if (focusable.length === 0) return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault(); last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault(); first.focus()
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [selected])
+
+  function openModal(evento: Evento, trigger: HTMLElement) {
+    triggerRef.current = trigger
+    setSelected(evento)
+  }
+
+  function closeModal() { setSelected(null) }
 
   if (eventos.length === 0) {
     return (
@@ -74,7 +121,11 @@ export default function ReelsGrid({ eventos }: ReelsGridProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.08 }}
-            onClick={() => setSelected(evento)}
+            role="button"
+            tabIndex={0}
+            aria-label={`Ver evento: ${evento.titulo}`}
+            onClick={e => openModal(evento, e.currentTarget as HTMLElement)}
+            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(evento, e.currentTarget as HTMLElement) } }}
             style={{ position: 'relative', aspectRatio: '9/16', borderRadius: 10, overflow: 'hidden', cursor: 'pointer', border: '1px solid rgba(0,180,255,0.15)', background: '#0d0d2b' }}>
             {/* Thumbnail */}
             {coverUrl ? (
@@ -112,9 +163,13 @@ export default function ReelsGrid({ eventos }: ReelsGridProps) {
       <AnimatePresence>
         {selected && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            onClick={() => setSelected(null)}
+            onClick={closeModal}
+            role="dialog"
+            aria-modal="true"
+            aria-label={selected.titulo}
             style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
             <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }}
+              ref={modalRef}
               onClick={e => e.stopPropagation()}
               style={{ background: '#0d0d2b', border: '1px solid rgba(0,180,255,0.2)', borderRadius: 12, maxWidth: 1000, width: '100%', maxHeight: '92vh', overflowY: 'auto', padding: 36 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
@@ -123,7 +178,7 @@ export default function ReelsGrid({ eventos }: ReelsGridProps) {
                   <h2 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 28, letterSpacing: 2 }}>{selected.titulo}</h2>
                   <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', marginTop: 4 }}>{selected.lugar} · {formatFecha(selected.fecha)}</p>
                 </div>
-                <button onClick={() => setSelected(null)} style={{ background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer' }}>
+                <button ref={closeButtonRef} onClick={closeModal} aria-label="Cerrar modal" style={{ background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer' }}>
                   <X size={22} />
                 </button>
               </div>

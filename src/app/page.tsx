@@ -11,33 +11,45 @@ import CotizacionForm from '@/components/layout/CotizacionForm'
 import Testimonios from '@/components/layout/Testimonios'
 import SobreMi from '@/components/layout/SobreMi'
 import Footer from '@/components/layout/Footer'
-import type { Config, Evento, Servicio, Precio, Media } from '@/types'
-import type { Testimonio } from '@/components/layout/Testimonios'
+import type { Config, Evento, Servicio, Precio, Media, Testimonio } from '@/types'
 
-export const revalidate = 0
+export const revalidate = 60
+
+const EMPTY_DATA = {
+  config: {} as Config,
+  eventos: [] as Evento[],
+  servicios: [] as Servicio[],
+  precios: [] as Precio[],
+  galeriaMedia: [] as Media[],
+  testimonios: [] as Testimonio[],
+}
 
 async function getData() {
-  const supabase = createClient()
+  try {
+    const supabase = createClient()
 
-  const [configRes, eventosRes, serviciosRes, preciosRes, mediaRes, testimoniosRes] = await Promise.all([
-    supabase.from('config').select('clave,valor'),
-    supabase.from('eventos').select('*, media(*)').eq('publicado', true).order('orden', { ascending: true }).order('fecha', { ascending: false }).limit(6),
-    supabase.from('servicios').select('*').eq('activo', true).order('orden'),
-    supabase.from('precios').select('*').eq('activo', true).order('orden'),
-    supabase.from('media').select('*').eq('tipo', 'imagen').order('created_at', { ascending: false }).limit(32),
-    supabase.from('testimonios').select('*').eq('activo', true).order('orden').limit(6),
-  ])
+    const [configRes, eventosRes, serviciosRes, preciosRes, mediaRes, testimoniosRes] = await Promise.all([
+      supabase.from('config').select('clave,valor'),
+      supabase.from('eventos').select('*, media(*)').eq('publicado', true).order('orden', { ascending: true }).order('fecha', { ascending: false }).limit(6),
+      supabase.from('servicios').select('*').eq('activo', true).order('orden'),
+      supabase.from('precios').select('*').eq('activo', true).order('orden'),
+      supabase.from('media').select('*').eq('tipo', 'imagen').order('created_at', { ascending: false }).limit(32),
+      supabase.from('testimonios').select('*').eq('activo', true).order('orden').limit(6),
+    ])
 
-  const config: Config = {}
-  configRes.data?.forEach(({ clave, valor }) => { if (valor) config[clave] = valor })
+    const config: Config = {}
+    configRes.data?.forEach(({ clave, valor }) => { if (valor) config[clave] = valor })
 
-  return {
-    config,
-    eventos: (eventosRes.data ?? []) as Evento[],
-    servicios: (serviciosRes.data ?? []) as Servicio[],
-    precios: (preciosRes.data ?? []) as Precio[],
-    galeriaMedia: (mediaRes.data ?? []) as Media[],
-    testimonios: (testimoniosRes.data ?? []) as Testimonio[],
+    return {
+      config,
+      eventos: (eventosRes.data ?? []) as Evento[],
+      servicios: (serviciosRes.data ?? []) as Servicio[],
+      precios: (preciosRes.data ?? []) as Precio[],
+      galeriaMedia: (mediaRes.data ?? []) as Media[],
+      testimonios: (testimoniosRes.data ?? []) as Testimonio[],
+    }
+  } catch {
+    return EMPTY_DATA
   }
 }
 
