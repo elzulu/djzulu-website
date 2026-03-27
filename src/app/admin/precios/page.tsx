@@ -105,7 +105,7 @@ export default function PreciosAdmin() {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <input type="checkbox" id="destacado" checked={form.destacado} onChange={e => setForm(f => ({ ...f, destacado: e.target.checked }))} style={{ width: 16, height: 16, accentColor: '#00b4ff', cursor: 'pointer' }} />
-          <label htmlFor="destacado" style={{ ...lbl, marginBottom: 0, cursor: 'pointer' }}>Marcar como "MÁS POPULAR"</label>
+          <label htmlFor="destacado" style={{ ...lbl, marginBottom: 0, cursor: 'pointer' }}>Marcar como &ldquo;MÁS POPULAR&rdquo;</label>
         </div>
 
         <div style={{ display: 'flex', gap: 10 }}>

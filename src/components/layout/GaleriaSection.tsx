@@ -11,8 +11,6 @@ interface Props { media: Media[] }
 export default function GaleriaSection({ media }: Props) {
   const [lightbox, setLightbox] = useState<number | null>(null)
 
-  if (media.length === 0) return null
-
   const prev = () => setLightbox(i => (i! - 1 + media.length) % media.length)
   const next = () => setLightbox(i => (i! + 1) % media.length)
 
@@ -26,6 +24,8 @@ export default function GaleriaSection({ media }: Props) {
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [lightbox, media.length])
+
+  if (media.length === 0) return null
 
   return (
     <section id="galeria" style={{ padding: '0 24px 80px' }}>

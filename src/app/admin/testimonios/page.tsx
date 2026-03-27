@@ -14,6 +14,7 @@ export default function TestimoniosAdmin() {
   const [loading, setLoading] = useState(false)
   const [fetching, setFetching] = useState(true)
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { load() }, [])
 
   async function load() {
@@ -89,7 +90,7 @@ export default function TestimoniosAdmin() {
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 15, fontWeight: 600 }}>{t.nombre}</div>
                 {t.evento && <div style={{ fontSize: 12, color: '#00b4ff', marginBottom: 6 }}>{t.evento}</div>}
-                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', lineHeight: 1.5 }}>"{t.texto}"</div>
+                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', lineHeight: 1.5 }}>&ldquo;{t.texto}&rdquo;</div>
               </div>
               <button onClick={() => remove(t.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,85,85,0.5)', padding: 4, flexShrink: 0 }}
                 onMouseEnter={e => (e.currentTarget.style.color = '#ff5555')}
